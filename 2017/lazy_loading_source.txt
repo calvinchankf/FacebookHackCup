@@ -1,0 +1,60 @@
+from __future__ import division
+import math
+import sys
+
+
+MIN_WEIGHT = 50
+
+
+def weightsToItems(weights):
+    return [{'weight': w, 'index': i} for i, w in enumerate(weights)]
+
+
+def sumWeights(items):
+    N = len(items)
+    return N * items[-1]['weight'] if N > 0 else 0
+
+
+def isReadyToGo(items):
+    return sumWeights(items) >= MIN_WEIGHT
+
+
+def pickRemainItems(items, inHandItem):
+    ret = None
+
+    w = inHandItem['weight']
+    multiplyBy = int(math.ceil(MIN_WEIGHT / w)) - 1
+
+    return items[:multiplyBy]
+
+T = int(raw_input().strip())
+
+for case in xrange(1, T + 1):
+    N = int(raw_input().strip())
+    weights = sorted([int(raw_input().strip()) for i in xrange(0, N)])
+    allItems = weightsToItems(weights)
+
+    cnt = 0
+    dropItems = None
+    while True:
+        dropItems = []
+        if not isReadyToGo(allItems):
+            break
+
+        cnt += 1
+
+        i1 = allItems.pop()
+
+        if isReadyToGo([i1]):
+            # print 'Drop %s' % [i1]
+            continue
+
+        _items = pickRemainItems(allItems, i1)
+
+        # print 'Drop %s' % ([i1] + list(_items))
+
+        for i in _items:
+            index = allItems.index(i)
+            allItems.pop(index)
+
+    print 'Case #%d: %d' % (case, cnt)
